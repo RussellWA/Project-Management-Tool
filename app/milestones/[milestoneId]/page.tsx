@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import PlanningLobby from "./sections/PlanningLobby";
+import DevelopmentBoard from "./sections/DevelopmentBoard";
 
 export default function MilestoneWorkspace() {
     const params = useParams();
@@ -85,13 +86,13 @@ export default function MilestoneWorkspace() {
                     <PlanningLobby isHistory={viewingPhase !== milestone.currActualPhase} />
                 )}
                     
-                {/* {viewingPhase === 'DEVELOPMENT' && (
-                    <DevelopmentBoard cards={milestone.devCards} />
+                {viewingPhase === 'DEVELOPMENT' && (
+                    <DevelopmentBoard />
                 )}
 
                 {viewingPhase === 'TESTING' && (
                     <div className="text-center text-gray-500 mt-20">Testing Phase UI goes here...</div>
-                )} */}
+                )}
             </main>
         </div>
     )

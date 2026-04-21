@@ -59,7 +59,7 @@ export const mockMilestoneDetails = {
     id: 'm-2',
     projectId: 'proj-2',
     name: 'MVP Launch',
-    currActualPhase: 'PLANNING' as Phase, // The furthest unlocked phase
+    currActualPhase: 'DEVELOPMENT' as Phase, // The furthest unlocked phase
 };
 
 // Helper array to calculate left/right logic
