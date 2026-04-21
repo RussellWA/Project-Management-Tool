@@ -31,8 +31,8 @@ export default async function ProjectView({params}: {params: Params}) {
                             {/* Progress Bar */}
                             <div className="w-full bg-gray-200 rounded-full h-2.5 mt-6">
                                 <div 
-                                className="bg-blue-600 h-2.5 rounded-full" 
-                                style={{ width: `${milestone.progress}%` }}
+                                    className="bg-blue-600 h-2.5 rounded-full" 
+                                    style={{ width: `${milestone.progress}%` }}
                                 ></div>
                             </div>
                             <p className="text-right text-xs text-gray-500 mt-2">{milestone.progress}% Complete</p>
