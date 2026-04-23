@@ -4,10 +4,12 @@ import DevCardModal from "@/components/DevCardModal";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import { getDifficultyColor } from "@/util/helper";
 import { CheckCircle2, User, UserPlus } from "lucide-react";
+import { LayoutGroup, motion } from "motion/react";
 import { useState } from "react";
 
-type Status = 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'DONE';
+export type Status = 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'DONE';
 export type Difficulty = 1 | 2 | 3 | 4 | 5;
+export const STATUS_ORDER: Status[] = ['TODO', 'IN_PROGRESS', 'REVIEW', 'DONE'];
 
 export interface DevCard {
     id: string;
@@ -32,8 +34,30 @@ export default function DevelopmentBoard() {
 
     const currUser = "Russell";
 
-    const claimTask = (id: string) => {
-        setCards(cards.map(card => card.id === id ? {...card, assignee: currUser, status: "IN_PROGRESS"} : card));
+    const updateStatus = (id: string, direction: "next" | "prev") => {
+        setCards(cards.map(card => {
+            if (card.id !== id) return card;
+
+            const currIdx = STATUS_ORDER.indexOf(card.status);
+
+            let newIdx = currIdx;
+            if (direction === "next" && currIdx < STATUS_ORDER.length - 1) {
+                newIdx++;
+            }
+            if (direction === "prev" && currIdx > 0) {
+                newIdx--;
+            }
+
+            const newStatus = STATUS_ORDER[newIdx]
+
+            const newCard = {...card,
+                status: newStatus,
+                assignee: newStatus === "TODO" ? undefined : newStatus === "IN_PROGRESS" ? currUser : card.assignee}
+
+            setSelectedCard(newCard)
+
+            return newCard
+        }))
     }
 
     const getCardsByStatus = (status: Status) => {
@@ -52,9 +76,12 @@ export default function DevelopmentBoard() {
             </div>
 
             {/* Body */}
-            <div className="p-3 flex-1 overflow-y-auto space-y-3">
+            <motion.div layout className="p-3 flex-1 overflow-y-auto space-y-3">
                 {getCardsByStatus(status).map((card) => (
-                    <div
+                    <motion.div
+                        layout
+                        layoutId={card.id}
+                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
                         key={card.id}
                         onClick={() => setSelectedCard(card)}
                         className={`bg-white p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow cursor-pointer group ${
@@ -78,16 +105,19 @@ export default function DevelopmentBoard() {
                                 </div>
                             ) : (
                                 <button
-                                    onClick={() => claimTask(card.id)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        updateStatus(card.id, "next");
+                                    }}
                                     className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-colors"
                                 >
                                     <UserPlus size={14} /> Claim
                                 </button>
                             )}
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </motion.div>
         </div>
     );
 
@@ -104,14 +134,16 @@ export default function DevelopmentBoard() {
             </div>
 
             <div className="flex gap-6 overflow-x-auto pb-4">
-                <Column title="To Do" status="TODO" count={getCardsByStatus('TODO').length} />
-                <Column title="In Progress" status="IN_PROGRESS" count={getCardsByStatus('IN_PROGRESS').length} />
-                <Column title="Review" status="REVIEW" count={getCardsByStatus('REVIEW').length} />
-                <Column title="Done" status="DONE" count={getCardsByStatus('DONE').length} />
+                <LayoutGroup>
+                    <Column title="To Do" status="TODO" count={getCardsByStatus('TODO').length} />
+                    <Column title="In Progress" status="IN_PROGRESS" count={getCardsByStatus('IN_PROGRESS').length} />
+                    <Column title="Review" status="REVIEW" count={getCardsByStatus('REVIEW').length} />
+                    <Column title="Done" status="DONE" count={getCardsByStatus('DONE').length} />
+                </LayoutGroup>
             </div>
 
-            {selectedCard&& (
-                <DevCardModal card={selectedCard} onClose={() => setSelectedCard(null)} claimTask={claimTask} />
+            {selectedCard && (
+                <DevCardModal card={selectedCard} onClose={() => setSelectedCard(null)} updateStatus={updateStatus} />
             )}
         </div>
     )
