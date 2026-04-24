@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import PlanningLobby from "./sections/PlanningLobby";
 import DevelopmentBoard from "./sections/DevelopmentBoard";
+import TestingBoard from "./sections/TestingBoard";
 
 export default function MilestoneWorkspace() {
     const params = useParams();
@@ -91,28 +92,9 @@ export default function MilestoneWorkspace() {
                 )}
 
                 {viewingPhase === 'TESTING' && (
-                    <div className="text-center text-gray-500 mt-20">Testing Phase UI goes here...</div>
+                    <TestingBoard />
                 )}
             </main>
         </div>
     )
 }
-
-// function DevelopmentBoard({ cards }: { cards: any[] }) {
-//   return (
-//     <div className="flex gap-6 h-full min-h-125">
-//       {/* Simple Kanban Column Mockup */}
-//       <div className="bg-gray-100 rounded-xl p-4 w-80 shrink-0">
-//         <h3 className="font-bold text-gray-700 mb-4 uppercase text-sm tracking-wider">Sprint Backlog</h3>
-//         <div className="grid gap-3">
-//           {cards.map(card => (
-//             <div key={card.id} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm cursor-grab">
-//               <h4 className="font-medium">{card.title}</h4>
-//               <p className="text-xs text-gray-500 mt-2">{card.status}</p>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

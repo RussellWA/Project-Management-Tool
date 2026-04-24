@@ -31,7 +31,6 @@ export default function DevelopmentBoard() {
     
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
     const selectedCard = cards.find(c => c.id === selectedCardId);
-    const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
 
     const currUser = "Russell";
 

@@ -2,21 +2,21 @@
 
 import { useEffect, useState } from "react";
 
-interface EditableDescriptionProps {
+interface EditableNoteProps {
     value: string;
     onChange: (val: string) => void;
 }
 
-export default function EditableDescription({value, onChange}: EditableDescriptionProps) {
+export default function EditableTitle({value, onChange}: EditableNoteProps) {
     const [isEditing, setIsEditing] = useState(false);
-    const [temp, setTemp] = useState(value || "Write something...\nSupports multiple lines.");
+    const [temp, setTemp] = useState(value);
 
     useEffect(() => {
         setTemp(value);
     }, [value]);
 
     return isEditing ? (
-        <textarea 
+        <input 
             value={temp}
             onChange={(e) => setTemp(e.target.value)}
             onBlur={() => {
@@ -35,14 +35,14 @@ export default function EditableDescription({value, onChange}: EditableDescripti
             }}
             onFocus={(e) => e.target.select()}
             autoFocus
-            className="text-sm border border-transparent focus:border-blue-500 focus:outline-none rounded p-1 transition w-full resize-none"
+            className="border border-transparent focus:border-blue-500 focus:outline-none rounded p-1 transition w-full"
         />
     ) : (
         <p
             onClick={() => setIsEditing(true)}
-            className={`${value ? "text-sm text-gray-700" : "text-xs text-gray-400 italic"} border border-transparent hover:border-gray-600 rounded py-1 px-2 transition cursor-text whitespace-pre-line`}
+            className="font-bold text-gray-800 text-lg border border-transparent hover:border-gray-600 rounded py-1 px-2 transition cursor-pointer w-full inline-block"
         >
-            {value || "Click to add note..."}
+            {value || "Untitled"}
         </p>
     )
 }
