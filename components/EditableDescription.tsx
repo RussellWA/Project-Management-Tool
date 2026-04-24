@@ -2,21 +2,21 @@
 
 import { useEffect, useState } from "react";
 
-interface EditableTitleProps {
+interface EditableDescriptionProps {
     value: string;
     onChange: (val: string) => void;
 }
 
-export default function EditableTitle({value, onChange}: EditableTitleProps) {
+export default function EditableDescription({value, onChange}: EditableDescriptionProps) {
     const [isEditing, setIsEditing] = useState(false);
-    const [temp, setTemp] = useState(value);
+    const [temp, setTemp] = useState(value || "Write something...\nSupports multiple lines.");
 
     useEffect(() => {
         setTemp(value);
     }, [value]);
 
     return isEditing ? (
-        <input 
+        <textarea 
             value={temp}
             onChange={(e) => setTemp(e.target.value)}
             onBlur={() => {
@@ -35,14 +35,14 @@ export default function EditableTitle({value, onChange}: EditableTitleProps) {
             }}
             onFocus={(e) => e.target.select()}
             autoFocus
-            className="border border-transparent focus:border-blue-500 focus:outline-none rounded p-1 transition min-w-100"
+            className="text-sm border border-transparent focus:border-blue-500 focus:outline-none rounded p-1 transition w-full resize-none"
         />
     ) : (
         <p
             onClick={() => setIsEditing(true)}
-            className="font-bold text-gray-800 text-lg border border-transparent hover:border-gray-600 rounded py-1 px-2 transition cursor-pointer w-fit inline-block"
+            className="text-sm text-gray-700 border border-transparent hover:border-gray-600 rounded py-1 px-2 transition cursor-text whitespace-pre-line"
         >
-            {value || "Untitled"}
+            {value || "Click to add description..."}
         </p>
     )
 }

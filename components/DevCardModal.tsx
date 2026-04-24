@@ -1,12 +1,13 @@
 "use client";
 
-import { DevCard } from "@/app/milestones/[milestoneId]/sections/DevelopmentBoard";
-import DifficultyBadge from "./DifficultyBadge";
-import { useEffect } from "react";
+import { DevCard, Difficulty } from "@/app/milestones/[milestoneId]/sections/DevelopmentBoard";
 import { User, X } from "lucide-react";
-import { motion } from "motion/react";
-import { StatusBadge } from "./StatusBadge";
+import { useEffect, useState } from "react";
+import DifficultyBadge from "./DifficultyBadge";
+import EditableDescription from "./EditableDescription";
 import EditableTitle from "./EditableTitle";
+import { StatusBadge } from "./StatusBadge";
+import { getDifficultyColor } from "@/util/helper";
 
 
 interface DevCardModalProps {
@@ -17,6 +18,10 @@ interface DevCardModalProps {
 }
 
 export default function DevCardModal({card, onClose, updateStatus, onUpdateCard}: DevCardModalProps) {
+
+    const DIFFICULTY = [1, 2, 3, 4, 5] as const;
+
+    const [open, setOpen] = useState(false);
 
     const prevBtnClass = card.status === "IN_PROGRESS" ? 
     "bg-gray-900 hover:text-gray-900 hover:border-gray-900" : card.status === "REVIEW" ?
@@ -78,7 +83,7 @@ export default function DevCardModal({card, onClose, updateStatus, onUpdateCard}
                     <EditableTitle 
                         value={card.title}
                         onChange={(newTitle) =>
-                            onUpdateCard(card.id, { title: newTitle === "" ? "Untitled" : newTitle })
+                            onUpdateCard(card.id, { title: newTitle === "" ? "Add a title..." : newTitle })
                         }
                     />
                     {card.assignee ? (
@@ -102,12 +107,47 @@ export default function DevCardModal({card, onClose, updateStatus, onUpdateCard}
                 {/* Description */}
                 <div className="grid grid-cols-4 gap-3 py-3 mb-4 ">
                     <div className="col-span-3">
-                        <p className="text-gray-800 text-sm whitespace-pre-line">{card.description}</p>
+                        <EditableDescription
+                            value={card.description}
+                            onChange={(newDesc) =>
+                                onUpdateCard(card.id, { description: newDesc })
+                            }
+                        />
                     </div>
-                    <div className="col-span-1 flex gap-2 items-center justify-end">
+                    <div className="col-span-1 flex gap-2 items-center justify-end relative">
                         <p className="text-gray-800 text-sm font-semibold">Difficulty:</p>
-                        <DifficultyBadge difficulty={card.difficulty} />
-                    </div>
+
+                        <div 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setOpen(prev => !prev);
+                            }} 
+                            className="cursor-pointer"
+                        >
+                            <DifficultyBadge difficulty={card.difficulty} />
+                        </div>
+
+                        {open && (
+                            <div 
+                                onClick={(e) => e.stopPropagation()}
+                                className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-md shadow-md p-2 flex gap-2 z-10"
+                            >
+                                {DIFFICULTY.map((d) => (
+                                    <button
+                                        key={d}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onUpdateCard(card.id, { difficulty: d });
+                                            setOpen(false);
+                                        }}
+                                        className={`w-6 h-6 rounded text-xs font-bold border ${getDifficultyColor(d)} hover:scale-130 transition`}
+                                    >
+                                        {d}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                        </div>
                 </div>
 
                 {/* Buttons */}
