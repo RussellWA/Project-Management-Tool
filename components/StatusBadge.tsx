@@ -35,9 +35,9 @@ export const StatusBadge = ({ status }: StatusBadgeProps) => {
 
     return (
         <div
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${style.bg} ${style.text}`}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-medium ${style.bg} ${style.text}`}
         >
-            <Icon className="w-3 h-3" />
+            <Icon className="w-4 h-4" />
             <span>
                 {status.replace("_", " ")}
             </span>

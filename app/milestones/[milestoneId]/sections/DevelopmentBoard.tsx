@@ -2,7 +2,6 @@
 
 import DevCardModal from "@/components/DevCardModal";
 import DifficultyBadge from "@/components/DifficultyBadge";
-import { getDifficultyColor } from "@/util/helper";
 import { CheckCircle2, User, UserPlus } from "lucide-react";
 import { LayoutGroup, motion } from "motion/react";
 import { useState } from "react";
@@ -21,8 +20,6 @@ export interface DevCard {
 }
 
 export default function DevelopmentBoard() {
-    const [selectedCard, setSelectedCard] = useState<DevCard | null>(null);
-
     // Mock Data
     const [cards, setCards] = useState<DevCard[]>([
         { id: 't1', title: 'Setup Next.js Auth', difficulty: 3, description: "setup bla bla bla", status: 'IN_PROGRESS', assignee: 'Russell' },
@@ -31,6 +28,10 @@ export default function DevelopmentBoard() {
         { id: 't4', title: 'Integrate Payment API', difficulty: 4, description: "xendit only with all options", status: 'TODO' },
         { id: 't5', title: 'Initialize Repository', difficulty: 1, description: "self explanatory", status: 'DONE', assignee: 'Russell' },
     ]);
+    
+    const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+    const selectedCard = cards.find(c => c.id === selectedCardId);
+    const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
 
     const currUser = "Russell";
 
@@ -54,10 +55,13 @@ export default function DevelopmentBoard() {
                 status: newStatus,
                 assignee: newStatus === "TODO" ? undefined : newStatus === "IN_PROGRESS" ? currUser : card.assignee}
 
-            setSelectedCard(newCard)
-
             return newCard
         }))
+    }
+
+    const updateCard = (id: string, updates: Partial<DevCard>) => {
+        // setCards(cards.map(card => card.id === id ? {...card, ...updates} : card))
+        setCards(prev => prev.map(card => card.id === id ? {...card, ...updates} : card))
     }
 
     const getCardsByStatus = (status: Status) => {
@@ -83,7 +87,7 @@ export default function DevelopmentBoard() {
                         layoutId={card.id}
                         transition={{ type: "spring", stiffness: 500, damping: 30 }}
                         key={card.id}
-                        onClick={() => setSelectedCard(card)}
+                        onClick={() => setSelectedCardId(card.id)}
                         className={`bg-white p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow cursor-pointer group ${
                             status === "DONE" ? "border-green-200 opacity-75 hover:opacity-100" : "border-gray-200"
                         }`}
@@ -128,7 +132,10 @@ export default function DevelopmentBoard() {
                     <h2 className="text-lg font-semibold text-gray-800">Task Board</h2>
                     <p className="text-sm text-gray-500">Drag and drop tasks to update their status.</p>
                 </div>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm transition-colors">
+                <button
+                    onClick={() => setIsFormOpen(true)} 
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm transition-colors"
+                >
                     + New Task
                 </button>
             </div>
@@ -143,7 +150,7 @@ export default function DevelopmentBoard() {
             </div>
 
             {selectedCard && (
-                <DevCardModal card={selectedCard} onClose={() => setSelectedCard(null)} updateStatus={updateStatus} />
+                <DevCardModal card={selectedCard} onClose={() => setSelectedCardId(null)} updateStatus={updateStatus} onUpdateCard={updateCard} />
             )}
         </div>
     )

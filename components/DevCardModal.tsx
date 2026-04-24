@@ -3,18 +3,20 @@
 import { DevCard } from "@/app/milestones/[milestoneId]/sections/DevelopmentBoard";
 import DifficultyBadge from "./DifficultyBadge";
 import { useEffect } from "react";
-import { User } from "lucide-react";
+import { User, X } from "lucide-react";
 import { motion } from "motion/react";
 import { StatusBadge } from "./StatusBadge";
+import EditableTitle from "./EditableTitle";
 
 
 interface DevCardModalProps {
     card: DevCard;
     onClose: () => void;
     updateStatus: (id: string, direction: "next" | "prev") => void;
+    onUpdateCard: (id: string, updates: Partial<DevCard>) => void;
 }
 
-export default function DevCardModal({card, onClose, updateStatus}: DevCardModalProps) {
+export default function DevCardModal({card, onClose, updateStatus, onUpdateCard}: DevCardModalProps) {
 
     const prevBtnClass = card.status === "IN_PROGRESS" ? 
     "bg-gray-900 hover:text-gray-900 hover:border-gray-900" : card.status === "REVIEW" ?
@@ -51,15 +53,34 @@ export default function DevCardModal({card, onClose, updateStatus}: DevCardModal
             }} 
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
         >
-            <div className="w-full max-w-sm md:max-w-lg lg:max-w-2xl bg-white border border-gray-400 rounded-lg p-6">
+            <div className="relative w-full max-w-sm md:max-w-lg lg:max-w-2xl bg-white border border-gray-400 rounded-lg p-6">
+                {/* Status Bookmark */}
+                <div className="absolute -top-4 left-5">
+                    <div className="px-2 py-0.5 text-xs rounded-md bg-blue-100 text-blue-700 shadow-sm">
+                        <StatusBadge status={card.status} />
+                    </div>
+                </div>
+
+                <div className="absolute -top-4 right-3">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onClose();
+                        }}
+                        className="inline-flex items-center p-2 rounded-full font-medium text-red-600 bg-red-100"
+                    >
+                            <X className="w-4 h-4" />
+                    </button>
+                </div>
+                
                 {/* Header */}
                 <div className="flex justify-between items-center border-b border-gray-500/30 pb-3">
-                    <div className="flex items-center gap-4">
-                        <p className="font-bold text-gray-800 text-lg">{card.title}</p>
-                        <motion.div key={card.status} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                            <StatusBadge status={card.status} />
-                        </motion.div>
-                    </div>
+                    <EditableTitle 
+                        value={card.title}
+                        onChange={(newTitle) =>
+                            onUpdateCard(card.id, { title: newTitle === "" ? "Untitled" : newTitle })
+                        }
+                    />
                     {card.assignee ? (
                         <div className="flex gap-2 items-center">
                             <p className="text-gray-800 text-sm font-semibold">Assigned to </p>
@@ -78,15 +99,18 @@ export default function DevCardModal({card, onClose, updateStatus}: DevCardModal
                     )}
                 </div>
 
-                <div className="grid grid-cols-4 gap-3 py-3">
+                {/* Description */}
+                <div className="grid grid-cols-4 gap-3 py-3 mb-4 ">
                     <div className="col-span-3">
-                        <p className="text-gray-800 text-sm">{card.description}</p>
+                        <p className="text-gray-800 text-sm whitespace-pre-line">{card.description}</p>
                     </div>
                     <div className="col-span-1 flex gap-2 items-center justify-end">
                         <p className="text-gray-800 text-sm font-semibold">Difficulty:</p>
                         <DifficultyBadge difficulty={card.difficulty} />
                     </div>
                 </div>
+
+                {/* Buttons */}
                 {card.status !== "TODO" && (
                     <div className="flex gap-3">
                         <button
