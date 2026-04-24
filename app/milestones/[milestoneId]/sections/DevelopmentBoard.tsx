@@ -35,6 +35,19 @@ export default function DevelopmentBoard() {
 
     const currUser = "Russell";
 
+    const handleNewTask = () => {
+        const newCard: DevCard = {
+            id: crypto.randomUUID(),
+            title: "Add a title...",
+            description: "Add description....",
+            status: "TODO",
+            difficulty: 1,
+            assignee: undefined,
+        };
+
+        setCards(prev => [newCard, ...prev]);
+    };
+
     const updateStatus = (id: string, direction: "next" | "prev") => {
         setCards(cards.map(card => {
             if (card.id !== id) return card;
@@ -60,7 +73,6 @@ export default function DevelopmentBoard() {
     }
 
     const updateCard = (id: string, updates: Partial<DevCard>) => {
-        // setCards(cards.map(card => card.id === id ? {...card, ...updates} : card))
         setCards(prev => prev.map(card => card.id === id ? {...card, ...updates} : card))
     }
 
@@ -133,7 +145,7 @@ export default function DevelopmentBoard() {
                     <p className="text-sm text-gray-500">Drag and drop tasks to update their status.</p>
                 </div>
                 <button
-                    onClick={() => setIsFormOpen(true)} 
+                    onClick={handleNewTask} 
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm transition-colors"
                 >
                     + New Task
