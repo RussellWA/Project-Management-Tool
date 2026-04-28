@@ -1,12 +1,11 @@
-import { supabase } from "../supabase";
-
+import { createSupabaseServerClient } from "../supabase/server";
 
 export const profileService = {
     async getMyProfile() {
+        const supabase = await createSupabaseServerClient();
+
         // 1. Get the current user session from the server
         const { data: { user } } = await supabase.auth.getUser();
-
-        console.log("user ", user)
         
         if (!user) return { data: null, error: 'No session' };
 

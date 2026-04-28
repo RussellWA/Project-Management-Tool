@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { createSupabaseServerClient } from './lib/supabase/server';
 
 export async function middleware(request: NextRequest) {
     // 1. Create an unmodified response object
@@ -10,25 +11,24 @@ export async function middleware(request: NextRequest) {
     });
 
     // 2. Create the Supabase Server Client
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                getAll() {
-                    return request.cookies.getAll();
-                },
-                setAll(cookiesToSet) {
-                // This safely updates the secure session cookies if they are expiring
-                    cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value));
-                    response = NextResponse.next({ request });
-                    cookiesToSet.forEach(({ name, value, options }) =>
-                        response.cookies.set(name, value, options)
-                    );
-                },
-            },
-        }
-    );
+    // const supabase = createServerClient(
+    //     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    //     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    //     {
+    //         cookies: {
+    //             getAll() {
+    //                 return request.cookies.getAll();
+    //             },
+    //             setAll(cookiesToSet) {
+    //                 cookiesToSet.forEach(({ name, value, options }) => {
+    //                     response.cookies.set(name, value, options);
+    //                 });
+    //             }
+    //         },
+    //     }
+    // );
+
+    const supabase = await createSupabaseServerClient();
 
     // 3. Get the current user session
     const { data: { user } } = await supabase.auth.getUser();

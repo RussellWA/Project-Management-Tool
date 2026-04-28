@@ -28,6 +28,9 @@ export default function NewProjectModal() {
 
         const { data, error: submitError } = await projectService.create(name, client);
 
+        console.log("data: ", data)
+        console.log("submit error: ", submitError)
+
         if (submitError) {
             setError(submitError.message);
             setIsLoading(false);

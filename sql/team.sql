@@ -11,9 +11,9 @@ CREATE POLICY "Enable read for authenticated users"
 ON project_members FOR SELECT
 USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Enable insert for PMs"
+CREATE POLICY "Enable insert for authenticated users"
 ON project_members FOR INSERT
-WITH CHECK (public.is_pm(project_id));
+WITH CHECK (auth.role() = 'authenticated')
 
 CREATE POLICY "Enable update for PMs"
 ON project_members FOR UPDATE

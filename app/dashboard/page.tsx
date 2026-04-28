@@ -4,7 +4,7 @@ import { profileService } from "@/lib/services/profiles";
 import { projectService } from "@/lib/services/project";
 import Link from "next/link";
 
-// Force Next.js to always fetch fresh data when loading the dashboard
+// Force Next.js to always fetch fresh data when loading  the dashboard
 export const dynamic = 'force-dynamic';
 
 export default async function Dashboard() {

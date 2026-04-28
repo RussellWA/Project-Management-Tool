@@ -1,5 +1,5 @@
 import { Project } from "../mockData";
-import { supabase } from "../supabase";
+import { supabase } from "../supabase/client";
 
 
 export const projectService = {

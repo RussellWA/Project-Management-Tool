@@ -2,7 +2,7 @@ CREATE TABLE projects (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name TEXT NOT NULL,
     client TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     created_by UUID REFERENCES auth.users(id) DEFAULT auth.uid()
 );
 
@@ -54,6 +54,7 @@ CREATE TRIGGER on_project_created
 CREATE POLICY "Logged in users can create projects"
 ON projects FOR INSERT
 WITH CHECK (auth.role() = 'authenticated');
+-- WITH CHECK (created_by = auth.uid())
 
 -- SECURITY DEFINER means this function ignores RLS. It will strictly 
 -- check the table, get a true/false, and return it without triggering loops.
