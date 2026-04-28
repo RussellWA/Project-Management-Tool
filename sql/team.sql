@@ -6,3 +6,19 @@ CREATE TABLE project_members (
   joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(project_id, user_id) 
 );
+
+CREATE POLICY "Enable read for authenticated users"
+ON project_members FOR SELECT
+USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Enable insert for PMs"
+ON project_members FOR INSERT
+WITH CHECK (public.is_pm(project_id));
+
+CREATE POLICY "Enable update for PMs"
+ON project_members FOR UPDATE
+USING (public.is_pm(project_id));
+
+CREATE POLICY "Enable delete for PMs"
+ON project_members FOR DELETE
+USING (public.is_pm(project_id));
