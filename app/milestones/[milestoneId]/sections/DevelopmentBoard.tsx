@@ -2,6 +2,7 @@
 
 import DevCardModal from "@/components/DevCardModal";
 import DifficultyBadge from "@/components/DifficultyBadge";
+import { Phase } from "@/lib/mockData";
 import { CheckCircle2, User, UserPlus } from "lucide-react";
 import { LayoutGroup, motion } from "motion/react";
 import { useState } from "react";
@@ -19,7 +20,11 @@ export interface DevCard {
     assignee?: string;
 }
 
-export default function DevelopmentBoard() {
+interface DevelopmentBoardProps {
+    onPhaseUpdate: (phase: Phase) => void;
+}
+
+export default function DevelopmentBoard({onPhaseUpdate}: DevelopmentBoardProps) {
     // Mock Data
     const [cards, setCards] = useState<DevCard[]>([
         { id: 't1', title: 'Setup Next.js Auth', difficulty: 3, description: "setup bla bla bla", status: 'IN_PROGRESS', assignee: 'Russell' },
@@ -46,6 +51,12 @@ export default function DevelopmentBoard() {
 
         setCards(prev => [newCard, ...prev]);
     };
+
+    const handleNextPhase = () => {
+        if (cards.length > 0 && cards.every(card => card.status === "DONE")) {
+            onPhaseUpdate("TESTING")
+        }
+    }
 
     const updateStatus = (id: string, direction: "next" | "prev") => {
         setCards(cards.map(card => {
@@ -142,13 +153,21 @@ export default function DevelopmentBoard() {
                 <div>
                     <h2 className="text-lg font-semibold text-gray-800">Task Board</h2>
                     <p className="text-sm text-gray-500">Drag and drop tasks to update their status.</p>
+                </div>1
+                <div className="flex gap-4">
+                    <button
+                        onClick={handleNewTask} 
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm transition-colors"
+                    >
+                        + New Task
+                    </button>
+                    <button
+                        onClick={handleNextPhase} 
+                        className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 shadow-sm transition-colors"
+                    >
+                        Next Phases
+                    </button>
                 </div>
-                <button
-                    onClick={handleNewTask} 
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm transition-colors"
-                >
-                    + New Task
-                </button>
             </div>
 
             <div className="flex gap-6 overflow-x-auto pb-4">

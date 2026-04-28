@@ -38,6 +38,10 @@ export default function MilestoneWorkspace() {
         if (canGoRight) setViewingPhase(PHASE_ORDER[currIdx + 1]);
     }
 
+    const handlePhaseUpdate = (phase: Phase) => {
+        milestone.currActualPhase = phase
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             {/* Header */}
@@ -84,15 +88,15 @@ export default function MilestoneWorkspace() {
             {/* Workspace Canvas */}
             <main className="flex-1 p-8 overflow-x-auto">
                 {viewingPhase === 'PLANNING' && (
-                    <PlanningLobby isHistory={viewingPhase !== milestone.currActualPhase} />
+                    <PlanningLobby isHistory={viewingPhase !== milestone.currActualPhase} onPhaseUpdate={handlePhaseUpdate} />
                 )}
                     
                 {viewingPhase === 'DEVELOPMENT' && (
-                    <DevelopmentBoard />
+                    <DevelopmentBoard onPhaseUpdate={handlePhaseUpdate} />
                 )}
 
                 {viewingPhase === 'TESTING' && (
-                    <TestingBoard />
+                    <TestingBoard onPhaseUpdate={handlePhaseUpdate} />
                 )}
             </main>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Phase } from "@/lib/mockData";
 import { Check, Clock, ExternalLink, FileText, Plus, Rocket } from "lucide-react";
 import { useState } from "react";
 
@@ -17,7 +18,12 @@ interface TeamMember {
     isApprove: boolean;
 }
 
-export default function PlanningLobby({isHistory}: {isHistory?: boolean}) {
+interface PlanningLobbyProps {
+    isHistory?: boolean;
+    onPhaseUpdate: (phase: Phase) => void
+}
+
+export default function PlanningLobby({isHistory, onPhaseUpdate}: PlanningLobbyProps) {
     // Mock Data: Documents
     const [documents, setDocuments] = useState<Document[]>([
         { id: '1', title: 'Master Project Proposal', url: '#' },
@@ -114,6 +120,7 @@ export default function PlanningLobby({isHistory}: {isHistory?: boolean}) {
                             </button>
                             
                             <button 
+                                onClick={() => onPhaseUpdate("DEVELOPMENT")}
                                 disabled={!allApprove}
                                 className={`flex items-center gap-2 px-8 py-2.5 rounded-lg font-bold transition-all ${
                                 allApprove 
