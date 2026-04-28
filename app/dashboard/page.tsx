@@ -1,3 +1,4 @@
+import SignOutButton from "@/components/SignOutButton";
 import { projectService } from "@/lib/project";
 import Link from "next/link";
 
@@ -18,6 +19,7 @@ export default async function Dashboard() {
                 >
                     + New Project
                 </button>
+                <SignOutButton />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
