@@ -6,38 +6,8 @@ CREATE TABLE projects (
     created_by UUID REFERENCES auth.users(id) DEFAULT auth.uid()
 );
 
-CREATE POLICY "Users can view their assigned projects"
-ON projects FOR SELECT
-USING (
-  EXISTS (
-    SELECT 1 FROM project_members 
-    WHERE project_members.project_id = projects.id
-    AND project_members.user_id = auth.uid()
-  )
-);
-
-CREATE POLICY "Only PMs can update project details"
-ON projects FOR UPDATE
-USING (
-  EXISTS (
-    SELECT 1 FROM project_members 
-    WHERE project_members.project_id = projects.id
-    AND project_members.user_id = auth.uid()
-    AND project_members.role = 'PM'
-  )
-);
-
-CREATE POLICY "Only PMs can delete projects"
-ON projects FOR DELETE
-USING (
-  EXISTS (
-    SELECT 1 FROM project_members 
-    WHERE project_members.project_id = projects.id
-    AND project_members.user_id = auth.uid()
-    AND project_members.role = 'PM'
-  )
-);
-
+-- Trigger Function: Automatically add the creator to the roster as a PM
+-- SECURITY DEFINER means it acts like an admin and bypasses RLS
 CREATE OR REPLACE FUNCTION public.handle_new_project_pm()
 RETURNS trigger AS $$
 BEGIN
@@ -47,14 +17,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Attach the trigger
 CREATE TRIGGER on_project_created
   AFTER INSERT ON projects
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_project_pm();
-
-CREATE POLICY "Logged in users can create projects"
-ON projects FOR INSERT
-WITH CHECK (auth.role() = 'authenticated');
--- WITH CHECK (created_by = auth.uid())
 
 -- SECURITY DEFINER means this function ignores RLS. It will strictly 
 -- check the table, get a true/false, and return it without triggering loops.
@@ -74,20 +40,30 @@ CREATE POLICY "Users can view their assigned projects"
 ON projects FOR SELECT
 USING (
   EXISTS (
+    SELECT 1 FROM public.project_members pm
+    WHERE pm.project_id = projects.id
+    AND pm.user_id = auth.uid()
+  )
+);
+
+-- 🚪 PROJECTS POLICIES
+-- Read: Only if you are on the roster
+CREATE POLICY "Projects - Read" ON projects FOR SELECT
+USING (
+  EXISTS (
     SELECT 1 FROM public.project_members
     WHERE project_members.project_id = id
     AND project_members.user_id = auth.uid()
   )
 );
 
-CREATE POLICY "Logged in users can create projects"
-ON projects FOR INSERT
-WITH CHECK (auth.role() = 'authenticated');
+-- Insert: ANY logged in user can insert. (Simplest check possible)
+CREATE POLICY "Projects - Insert" ON projects FOR INSERT
+WITH CHECK (auth.uid() IS NOT NULL);
 
-CREATE POLICY "Only PMs can update project details"
-ON projects FOR UPDATE
+-- Update/Delete: Only if the helper function says you are a PM
+CREATE POLICY "Projects - Update" ON projects FOR UPDATE
 USING (public.is_pm(id));
 
-CREATE POLICY "Only PMs can delete projects"
-ON projects FOR DELETE
+CREATE POLICY "Projects - Delete" ON projects FOR DELETE
 USING (public.is_pm(id));

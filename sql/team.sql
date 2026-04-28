@@ -7,18 +7,18 @@ CREATE TABLE project_members (
   UNIQUE(project_id, user_id) 
 );
 
-CREATE POLICY "Enable read for authenticated users"
-ON project_members FOR SELECT
-USING (auth.role() = 'authenticated');
+-- 🚪 PROJECT MEMBERS POLICIES
+-- Read: Anyone logged in can see who is on the roster
+CREATE POLICY "Members - Read" ON project_members FOR SELECT
+USING (auth.uid() IS NOT NULL);
 
-CREATE POLICY "Enable insert for authenticated users"
-ON project_members FOR INSERT
-WITH CHECK (auth.role() = 'authenticated')
+-- Insert/Update/Delete: Only existing PMs can modify the roster
+-- Note: Your initial PM assignment works because the Trigger bypasses these!
+CREATE POLICY "Members - Insert" ON project_members FOR INSERT
+WITH CHECK (public.is_pm(project_id));
 
-CREATE POLICY "Enable update for PMs"
-ON project_members FOR UPDATE
+CREATE POLICY "Members - Update" ON project_members FOR UPDATE
 USING (public.is_pm(project_id));
 
-CREATE POLICY "Enable delete for PMs"
-ON project_members FOR DELETE
+CREATE POLICY "Members - Delete" ON project_members FOR DELETE
 USING (public.is_pm(project_id));
