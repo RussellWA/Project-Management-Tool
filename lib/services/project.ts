@@ -8,7 +8,7 @@ export async function getAllProjects(): Promise<{data: Project[] | null, error: 
 
     const { data, error } = await supabase
         .from("projects")
-        .select("*")
+        .select(`*, milestones (*)`)
         .order("created_at", { ascending: false })
 
 
@@ -30,10 +30,7 @@ export async function getProject(id: string): Promise<{data: Project | null, err
 
     const { data, error } = await supabase
         .from("projects")
-        .select(`
-            *,
-            milestones (*)
-        `)
+        .select(`*, milestones (*)`)
         .eq("id", id)
         .single()
 
