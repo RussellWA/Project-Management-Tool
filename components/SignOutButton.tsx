@@ -1,14 +1,14 @@
 'use client';
 
-import { supabase } from '@/lib/supabase/client';
+import { signout } from '@/lib/services/auth';
 import { useRouter } from 'next/navigation';
 
 export default function SignOutButton() {
   const router = useRouter();
 
   const handleSignOut = async () => {
-    // 1. Tell Supabase to destroy the session cookie
-    await supabase.auth.signOut();
+    
+    await signout();
     
     // 2. Refresh the router to trigger the middleware
     router.refresh();

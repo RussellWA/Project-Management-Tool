@@ -1,6 +1,6 @@
 "use client";
 
-import { supabase } from "@/lib/supabase/client";
+import { login } from "@/lib/services/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -15,14 +15,11 @@ export default function LoginPage() {
         e.preventDefault();
         setIsLoading(true);
         setError(null);
-        
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email, 
-            password: password,
-        });
+
+        const { error } = await login(email, password)
 
         if (error) {
-            setError(error.message);
+            setError(error);
             setIsLoading(false);
             return;
         }

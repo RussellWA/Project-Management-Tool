@@ -1,6 +1,6 @@
 'use client';
 
-import { projectService } from '@/lib/services/project';
+import { createProject } from '@/lib/services/project';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -26,13 +26,10 @@ export default function NewProjectModal() {
         setIsLoading(true);
         setError(null);
 
-        const { data, error: submitError } = await projectService.create(name, client);
+        const { error } = await createProject(name, client)
 
-        console.log("data: ", data)
-        console.log("submit error: ", submitError)
-
-        if (submitError) {
-            setError(submitError.message);
+        if (error) {
+            setError(error);
             setIsLoading(false);
         return;
         }
