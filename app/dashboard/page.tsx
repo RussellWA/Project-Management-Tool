@@ -1,9 +1,9 @@
 
 import { getAllProjects } from "@/lib/services/project";
-import { ProjectPage } from "./sections/ProjectPage";
 import { getProfile } from "@/lib/services/profiles";
+import { ProjectPage } from "./ProjectPage";
 
-// Force Next.js to always fetch fresh data when loading  the dashboard
+// Force Next.js to always fetch fresh data when loading the dashboard
 export const dynamic = 'force-dynamic';
 
 export default async function Dashboard() {
