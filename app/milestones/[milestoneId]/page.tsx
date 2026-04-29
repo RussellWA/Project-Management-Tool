@@ -1,6 +1,6 @@
 "use client";
 
-import { mockMilestoneDetails, Phase, PHASE_ORDER } from "@/lib/mockData";
+import { mockMilestoneDetails, PHASE_ORDER } from "@/lib/mockData";
 import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -8,6 +8,7 @@ import { useState } from "react";
 import PlanningLobby from "./sections/PlanningLobby";
 import DevelopmentBoard from "./sections/DevelopmentBoard";
 import TestingBoard from "./sections/TestingBoard";
+import { Phase } from "@/types/milestone";
 
 export default function MilestoneWorkspace() {
     const params = useParams();

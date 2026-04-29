@@ -1,6 +1,6 @@
 "use server"
 
-import { Project } from "../mockData";
+import { Project } from "@/types/project";
 import { createSupabaseServerClient } from "../supabase/server";
 
 export async function getAllProjects(): Promise<{data: Project[] | null, error: string | null}> {
@@ -33,7 +33,6 @@ export async function getProject(id: string): Promise<{data: Project | null, err
         .select(`*, milestones (*)`)
         .eq("id", id)
         .single()
-
 
     return { data, error: error ? error.message : null}
 }
