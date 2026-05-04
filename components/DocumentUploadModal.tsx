@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Document } from '@/types/document';
 import { createDocument } from '@/lib/services/document';
+import { Profile } from '@/types/profile';
 
 interface DocumentUploadModalProps {
     projectId: string;          // Project is always required
     milestoneId?: string | null; // Optional phase
     taskId?: string | null;      // Optional task
-    profile: any;
+    profile: Profile | null;
 }
 
 export default function DocumentUploadModal({ 
@@ -39,6 +40,11 @@ export default function DocumentUploadModal({
     };
 
     const handleSubmit = async (e: React.SyntheticEvent) => {
+
+        if (!profile) {
+            return
+        }
+
         e.preventDefault();
         setIsLoading(true);
         setError(null);

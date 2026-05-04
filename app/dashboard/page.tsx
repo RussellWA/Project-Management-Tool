@@ -46,7 +46,9 @@ export default async function Dashboard() {
                     <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
                     <div className="flex items-center gap-4">
                         {/* The modal is self-contained. It renders its own button! */}
-                        <NewProjectModal />
+                        {projects && projects.length > 0 && (
+                            <NewProjectModal />
+                        )}
                         <SignOutButton />
                         <div className="text-sm text-gray-500">
                             {profile ? (

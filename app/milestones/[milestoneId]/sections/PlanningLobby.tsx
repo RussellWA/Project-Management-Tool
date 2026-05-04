@@ -1,18 +1,7 @@
-"use client";
-
 import DocumentUploadModal from "@/components/DocumentUploadModal";
 import { Milestone, Phase } from "@/types/milestone";
 import { Profile } from "@/types/profile";
-import { Check, Clock, ExternalLink, FileText, Plus, Rocket } from "lucide-react";
-import { useState } from "react";
-
-
-interface TeamMember {
-    id: string;
-    name: string;
-    role: string;
-    isApprove: boolean;
-}
+import { ExternalLink, FileText, Rocket } from "lucide-react";
 
 interface PlanningLobbyProps {
     milestone: Milestone;
@@ -22,22 +11,6 @@ interface PlanningLobbyProps {
 }
 
 export default function PlanningLobby({milestone, isHistory, onPhaseUpdate, profile}: PlanningLobbyProps) {
-
-    // Mock Data: The Lobby
-    const [team, setTeam] = useState<TeamMember[]>([
-        { id: 'u1', name: 'Russell (You)', role: 'Lead Dev', isApprove: false },
-        { id: 'u2', name: 'Sarah', role: 'Designer', isApprove: true },
-        { id: 'u3', name: 'Mike', role: 'Project Manager', isApprove: false },
-    ]);
-
-    const allApprove = team.every(member => member.isApprove);
-    // Simulate i am u1
-    const currUser = team[0];
-
-    const toggleStatus = () => {
-        if (isHistory) return;
-        setTeam(team.map(member => member.id === currUser.id ? {...member, isApprove: !member.isApprove} : member));
-    }
 
     return (
         <div className="max-w-4xl mx-auto grid gap-6">
@@ -73,51 +46,12 @@ export default function PlanningLobby({milestone, isHistory, onPhaseUpdate, prof
                 )}
 
                 <div className="p-6">
-                    {/* Roster */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-                        {team.map((member) => (
-                            <div
-                                key={member.id}
-                                className={`p-4 rounded-lg border flex items-center justify-between transition-colors ${
-                                member.isApprove ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-white'}`}
-                            >
-                                <div>
-                                    <p className={`text-sm font-semibold ${member.isApprove ? 'text-green-800' : 'text-gray-700'}`}>
-                                        {member.name}
-                                    </p>
-                                    <p className="text-xs text-gray-500">{member.role}</p>
-                                </div>
-                                {member.isApprove ? (
-                                    <Check className="text-green-600" size={20} />
-                                ) : (
-                                    <Clock className="text-gray-300" size={20} />
-                                )}
-                            </div>
-                        ))}
-                    </div>
-
                     {/* Action */}
                     {!isHistory && (
                         <div className="flex justify-between items-center pt-6 border-t border-gray-100">
-                            <button
-                                onClick={toggleStatus}
-                                className={`px-6 py-2.5 rounded-lg font-medium transition-colors ${
-                                    currUser.isApprove
-                                        ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' 
-                                        : 'bg-green-600 text-white hover:bg-green-700 shadow-sm'
-                                }`}
-                            >
-                                {currUser.isApprove ? 'Cancel Approval' : 'Approve'}
-                            </button>
-                            
                             <button 
                                 onClick={() => onPhaseUpdate("DEVELOPMENT")}
-                                disabled={!allApprove}
-                                className={`flex items-center gap-2 px-8 py-2.5 rounded-lg font-bold transition-all ${
-                                allApprove 
-                                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg translate-y-0' 
-                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                }`}
+                                className="flex items-center gap-2 px-8 py-2.5 rounded-lg font-bold transition-all bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg translate-y-0"
                             >
                                 Start Development <Rocket size={18} />
                             </button>

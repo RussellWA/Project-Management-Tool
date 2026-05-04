@@ -18,3 +18,17 @@ export async function getProfile(): Promise<{data: Profile | null,error: string 
 
     return { data, error: error ? error.message : null}
 }
+
+export async function getAllProfile(): Promise<{data: Profile[] | null,error: string | null}>  {
+    const supabase = await createSupabaseServerClient()
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { data: null, error: 'No session' };
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+
+    return { data, error: error ? error.message : null}
+}
