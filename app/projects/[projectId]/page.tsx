@@ -19,6 +19,8 @@ export default async function ProjectView({params}: {params: Params}) {
     const { data: profiles } = await getAllProfile()
     const { data: members } = await getMembers(resolvedParams.projectId)
 
+    const pm = members?.find(mem => mem.role === "PM")
+
     if (error) {
         return (
             <div className="min-h-screen bg-gray-50 p-8 flex items-center justify-center">
@@ -38,7 +40,7 @@ export default async function ProjectView({params}: {params: Params}) {
                     </Link>
                     <h1 className="text-3xl font-bold text-gray-900">{project?.name}</h1>
                     <div className="flex items-center gap-4">
-                        {project && project.milestones.length > 0 && (
+                        {project && project.milestones.length > 0 && profile?.id === pm?.user_id && (
                             <NewMilestoneModal id={resolvedParams.projectId} />
                         )}
                         <DocumentUploadModal projectId={resolvedParams.projectId} profile={profile} />
@@ -63,7 +65,9 @@ export default async function ProjectView({params}: {params: Params}) {
                                 <div className="bg-white border border-dashed border-gray-300 rounded-xl p-12 max-w-lg mx-auto shadow-sm">
                                     <h3 className="text-lg font-medium text-gray-900 mb-2">No milestones yet</h3>
                                     <p className="text-gray-500 mb-6">Create your first milestone.</p>
-                                    <NewMilestoneModal id={resolvedParams.projectId} />
+                                    {profile?.id === pm?.user_id && (
+                                        <NewMilestoneModal id={resolvedParams.projectId} />
+                                    )}
                                 </div>
                             </div>                
                         ) : (
@@ -79,12 +83,14 @@ export default async function ProjectView({params}: {params: Params}) {
                         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm sticky top-8">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="font-semibold text-gray-900">Project Team</h2>
-                                <ProjectMemberModal projectId={project?.id} profiles={profiles} existingMembers={members} />
+                                {profile?.id === pm?.user_id && (
+                                    <ProjectMemberModal projectId={project?.id} profiles={profiles} existingMembers={members} />
+                                )}
                             </div>
                             
                             <ul className="space-y-3">
                                 {members?.map((member) => {
-                                    const profile = profiles?.find(
+                                    const user = profiles?.find(
                                         (profile) => profile.id === member.user_id
                                     );
 
@@ -97,7 +103,7 @@ export default async function ProjectView({params}: {params: Params}) {
 
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-medium">
-                                                    {profile?.username ?? "Unknown User"} ({member.role})
+                                                    {user?.username ?? "Unknown User"} ({member.role})
                                                 </span>
                                                 <div className="flex flex-wrap gap-1 mt-1">
                                                     {member.role_detail?.map((detail) => (
@@ -111,13 +117,17 @@ export default async function ProjectView({params}: {params: Params}) {
                                                 </div>
                                             </div>
 
-                                            <ProjectMemberModal projectId={project?.id} profiles={profiles} member={member} existingMembers={members} />
-                                            
-                                            {member.role !== "PM" && (
-                                                <DeleteMemberButton
-                                                    key={member.id}
-                                                    memberId={member.id}
-                                                />
+                                            {profile?.id === pm?.user_id && (
+                                                <>
+                                                    <ProjectMemberModal projectId={project?.id} profiles={profiles} member={member} existingMembers={members} />
+                                                    
+                                                    {member.role !== "PM" && (
+                                                        <DeleteMemberButton
+                                                            key={member.id}
+                                                            memberId={member.id}
+                                                        />
+                                                    )}
+                                                </>
                                             )}
                                         </li>
                                     );
