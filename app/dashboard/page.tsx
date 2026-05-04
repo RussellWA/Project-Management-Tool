@@ -4,6 +4,7 @@ import { getProfile } from "@/lib/services/profiles";
 import NewProjectModal from "@/components/NewProjectModal";
 import SignOutButton from "@/components/SignOutButton";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 // Force Next.js to always fetch fresh data when loading the dashboard
 export const dynamic = 'force-dynamic';
@@ -23,12 +24,17 @@ export default async function Dashboard() {
         );
     }
 
-    if (profileError) {
-        return (
-            <div className="min-h-screen bg-gray-50 p-8 flex items-center justify-center">
-                <div className="bg-red-50 text-red-600 p-4 rounded-lg">Failed to load profile: {profileError}</div>
-            </div>
-        );
+    // if (profileError) {
+        // return (
+        //     <div className="min-h-screen bg-gray-50 p-8 flex items-center justify-center">
+        //         <div className="bg-red-50 text-red-600 p-4 rounded-lg">Failed to load profile: {profileError}</div>
+        //     </div>
+        // );
+    // }
+
+    if (profileError || !profile) {
+        redirect('/login'); 
+        // Note: redirect() stops executing the rest of the code in this component
     }
 
     return (

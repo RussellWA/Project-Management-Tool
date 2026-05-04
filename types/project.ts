@@ -1,3 +1,4 @@
+import { Document } from "./document";
 import { Milestone } from "./milestone";
 
 export interface Project {
@@ -5,4 +6,5 @@ export interface Project {
     client: string;
     name: string;
     milestones: Milestone[];
+    documents: Document[];
 }

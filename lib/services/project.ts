@@ -30,8 +30,9 @@ export async function getProject(id: string): Promise<{data: Project | null, err
 
     const { data, error } = await supabase
         .from("projects")
-        .select(`*, milestones (*)`)
+        .select(`*, milestones (*), documents (*)`)
         .eq("id", id)
+        .is('documents.milestone_id', null) 
         .single()
 
     return { data, error: error ? error.message : null}

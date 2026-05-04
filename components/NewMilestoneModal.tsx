@@ -50,7 +50,7 @@ export default function NewMilestoneModal({id}: NewMilestoneModalProps) {
                 onClick={() => setIsOpen(true)}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
             >
-                + New Project
+                + New Milestone
             </button>
 
             {isOpen && (

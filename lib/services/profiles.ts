@@ -15,6 +15,5 @@ export async function getProfile() {
         .eq('id', user.id)
         .single();
 
-
     return { data, error: error ? error.message : null}
 }
