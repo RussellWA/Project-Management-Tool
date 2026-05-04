@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getProfile } from '@/lib/services/profiles';
 import { Document } from '@/types/document';
 import { createDocument } from '@/lib/services/document';
 
@@ -45,6 +44,7 @@ export default function DocumentUploadModal({
         setError(null);
         
         const document: Document = {
+            id: "",
             name: name, 
             url: url,
             type: type,

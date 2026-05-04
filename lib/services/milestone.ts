@@ -20,11 +20,29 @@ export async function createMilestone(id: string, name: string): Promise<{error:
 export async function getMilestone(id: string): Promise<{data: Milestone | null, error: string | null}> {
     const supabase = await createSupabaseServerClient()
 
-    const { data, error } = await supabase
-        .from("milestones")
-        .select(`*, task (*)`)
-        .eq("id", id)
-        .single()
+    // const { data, error } = await supabase
+    //     .from("milestones")
+    //     .select(`*, tasks (*), documents (*)`)
+    //     .eq("id", id)
+    //     .single()
 
-    return { data, error: error ? error.message : null}
+    const { data: milestone, error } = await supabase
+        .from("milestones")
+        .select(`*`)
+        .eq("id", id)
+        .single();
+
+    const { data: documents } = await supabase
+        .from("documents")
+        .select("*")
+        .or(`milestone_id.eq.${milestone.id},and(project_id.eq.${milestone.project_id},milestone_id.is.null)`);
+
+    return {
+        data: {
+            ...milestone,
+            documents: documents || []
+        },
+        error: error ? error.message : null
+    };
+
 }

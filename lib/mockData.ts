@@ -48,6 +48,3 @@ export const mockMilestoneDetails = {
     name: 'MVP Launch',
     currActualPhase: 'TESTING' as Phase, // The furthest unlocked phase
 };
-
-// Helper array to calculate left/right logic
-export const PHASE_ORDER: Phase[] = ['PLANNING', 'DEVELOPMENT', 'TESTING', 'DONE'];

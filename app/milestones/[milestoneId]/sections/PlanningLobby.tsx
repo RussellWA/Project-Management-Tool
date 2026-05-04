@@ -1,15 +1,11 @@
 "use client";
 
-import { Phase } from "@/lib/mockData";
+import DocumentUploadModal from "@/components/DocumentUploadModal";
+import { Milestone, Phase } from "@/types/milestone";
+import { Profile } from "@/types/profile";
 import { Check, Clock, ExternalLink, FileText, Plus, Rocket } from "lucide-react";
 import { useState } from "react";
 
-
-interface Document {
-    id: string;
-    title: string;
-    url: string;
-}
 
 interface TeamMember {
     id: string;
@@ -19,16 +15,13 @@ interface TeamMember {
 }
 
 interface PlanningLobbyProps {
+    milestone: Milestone;
     isHistory?: boolean;
     onPhaseUpdate: (phase: Phase) => void
+    profile: Profile | null;
 }
 
-export default function PlanningLobby({isHistory, onPhaseUpdate}: PlanningLobbyProps) {
-    // Mock Data: Documents
-    const [documents, setDocuments] = useState<Document[]>([
-        { id: '1', title: 'Master Project Proposal', url: '#' },
-        { id: '2', title: 'Figma Design System', url: '#' },
-    ]);
+export default function PlanningLobby({milestone, isHistory, onPhaseUpdate, profile}: PlanningLobbyProps) {
 
     // Mock Data: The Lobby
     const [team, setTeam] = useState<TeamMember[]>([
@@ -56,7 +49,7 @@ export default function PlanningLobby({isHistory, onPhaseUpdate}: PlanningLobbyP
                 </div>
 
                 <div className="p-4 grid gap-3">
-                    {documents.map((doc) => (
+                    {milestone?.documents?.map((doc) => (
                         <a
                             key={doc.id}
                             href={doc.url}
@@ -66,7 +59,7 @@ export default function PlanningLobby({isHistory, onPhaseUpdate}: PlanningLobbyP
                                 <div className="p-2 bg-blue-100 text-blue-600 rounded-md">
                                     <FileText size={20} />
                                 </div>
-                                <span className="font-medium text-gray-700 group-hover:text-blue-700">{doc.title}</span>
+                                <span className="font-medium text-gray-700 group-hover:text-blue-700">{doc.name}</span>
                             </div>
                             <ExternalLink size={16} className="text-gray-400 group-hover:text-blue-600" />
                         </a>
@@ -75,9 +68,7 @@ export default function PlanningLobby({isHistory, onPhaseUpdate}: PlanningLobbyP
 
                 {!isHistory && (
                     <div className="p-6">
-                        <button className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-800 p-3 border border-dashed border-gray-300 rounded-lg justify-center transition-colors hover:bg-gray-50">
-                            <Plus size={16} /> Add Document Link
-                        </button>
+                        <DocumentUploadModal projectId={milestone.project_id} milestoneId={milestone.id} profile={profile} />
                     </div>
                 )}
 

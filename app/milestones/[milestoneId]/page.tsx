@@ -1,105 +1,27 @@
-"use client";
+import { getMilestone } from "@/lib/services/milestone";
+import MilestoneWorkspaceClient from "./client";
+import { getProfile } from "@/lib/services/profiles";
 
-import { mockMilestoneDetails, PHASE_ORDER } from "@/lib/mockData";
-import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useState } from "react";
-import PlanningLobby from "./sections/PlanningLobby";
-import DevelopmentBoard from "./sections/DevelopmentBoard";
-import TestingBoard from "./sections/TestingBoard";
-import { Phase } from "@/types/milestone";
+type Params = Promise<{ milestoneId: string }>;
 
-export default function MilestoneWorkspace() {
-    const params = useParams();
-    const milestoneId = params.milestoneId as string;
+export default async function MilestoneWorkspacePage({params}: {params: Params}) {
+    const resolvedParams = await params;
 
-    const milestone = mockMilestoneDetails;
+    // 1. Secure Server-Side Fetch
+    const { data: milestone, error } = await getMilestone(resolvedParams.milestoneId)
+    const { data: profile, error: profileError } = await getProfile()
 
-    const [viewingPhase, setViewingPhase] = useState<Phase>(milestone.currActualPhase);
-
-    // Will change for navigation
-    const currIdx = PHASE_ORDER.indexOf(viewingPhase);
-
-    // Actual current phase
-    const actualIdx = PHASE_ORDER.indexOf(milestone.currActualPhase);
-
-    // 0 is the far left
-    const canGoLeft = currIdx > 0;
-    // if curr idx is less than 3 (cuz 3 is far right) AND curr idx cant be more than actual (cuz locked)
-    const canGoRight = currIdx < PHASE_ORDER.length - 1 && currIdx < actualIdx
-
-    const isLocked = currIdx === actualIdx && currIdx < PHASE_ORDER.length - 1;
-
-    const handleLeftClick = () => {
-        if (canGoLeft) setViewingPhase(PHASE_ORDER[currIdx - 1]);
-    }
-
-    const handleRightClick = () => {
-        if (canGoRight) setViewingPhase(PHASE_ORDER[currIdx + 1]);
-    }
-
-    const handlePhaseUpdate = (phase: Phase) => {
-        milestone.currActualPhase = phase
-    }
-
-    return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            {/* Header */}
-            <header className="bg-white border-b border-gray-200 px-8 py-4">
-                <Link href={`/projects/${milestone.projectId}`} className="text-sm text-gray-500 hover:text-gray-900">
-                    ← Back to Project
-                </Link>
-                <h1 className="text-2xl font-bold mt-2">{milestone.name}</h1>
-            </header>
-
-            {/* Phase Nav */}
-            <div className="bg-white border-b border-gray-200 px-8 py-3 flex justify-between items-center sticky top-0 shadow-sm z-10">
-                <button
-                    onClick={handleLeftClick}
-                    disabled={!canGoLeft}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-colors ${
-                        canGoLeft ? 'bg-gray-100 text-gray-800 hover:bg-gray-200' : 'text-gray-300 cursor-not-allowed'
-                    }`}
-                >
-                    <ChevronLeft size={18} /> Previous Phase
-                </button>
-
-                <div className="text-center">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Currently Viewing</span>
-                    <span className="text-lg font-bold text-blue-700 bg-blue-50 px-4 py-1 rounded-full border border-blue-200">{viewingPhase}</span>
+    // 2. Handle Errors on the Server
+    if (error || !milestone) {
+        return (
+            <div className="min-h-screen bg-gray-50 p-8 flex items-center justify-center">
+                <div className="bg-red-50 text-red-600 p-4 rounded-lg">
+                    Failed to load milestone: {error || 'Not found'}
                 </div>
-
-                <button
-                    onClick={handleRightClick}
-                    disabled={!canGoRight}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-colors ${
-                        canGoRight ? 'bg-blue-600 text-white hover:bg-blue-700' : 
-                        isLocked ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'opacity-0 cursor-default'
-                    }`}
-                >
-                    {isLocked ? (
-                        <><Lock size={16} /> Locked</>
-                    ) : (
-                        <>Next Phase <ChevronRight size={18} /></>
-                    )}
-                </button>
             </div>
+        );
+    }
 
-            {/* Workspace Canvas */}
-            <main className="flex-1 p-8 overflow-x-auto">
-                {viewingPhase === 'PLANNING' && (
-                    <PlanningLobby isHistory={viewingPhase !== milestone.currActualPhase} onPhaseUpdate={handlePhaseUpdate} />
-                )}
-                    
-                {viewingPhase === 'DEVELOPMENT' && (
-                    <DevelopmentBoard onPhaseUpdate={handlePhaseUpdate} />
-                )}
-
-                {viewingPhase === 'TESTING' && (
-                    <TestingBoard onPhaseUpdate={handlePhaseUpdate} />
-                )}
-            </main>
-        </div>
-    )
+    // 3. Pass the clean data to the interactive Client Component
+    return <MilestoneWorkspaceClient initialMilestone={milestone} profile={profile} />;
 }

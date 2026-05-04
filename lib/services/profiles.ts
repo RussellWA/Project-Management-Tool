@@ -1,8 +1,9 @@
 "use server"
 
+import { Profile } from "@/types/profile";
 import { createSupabaseServerClient } from "../supabase/server";
 
-export async function getProfile() {
+export async function getProfile(): Promise<{data: Profile | null,error: string | null}>  {
     const supabase = await createSupabaseServerClient()
 
     const { data: { user } } = await supabase.auth.getUser();
