@@ -8,17 +8,20 @@ import PlanningLobby from "./sections/PlanningLobby";
 import DevelopmentBoard from "./sections/DevelopmentBoard";
 import TestingBoard from "./sections/TestingBoard";
 import { Profile } from "@/types/profile";
+import { ProjectMember } from "@/types/project_member";
 
 interface MilestoneWorkspaceClientProps {
     initialMilestone: Milestone;
     profile: Profile | null;
+    pm: ProjectMember | undefined;
 }
 
-export default function MilestoneWorkspaceClient({ initialMilestone, profile }: MilestoneWorkspaceClientProps) {
+export default function MilestoneWorkspaceClient({ initialMilestone, profile, pm }: MilestoneWorkspaceClientProps) {
     
     // We store the milestone in state so we can update it locally
     const [milestone, setMilestone] = useState(initialMilestone);
     const [viewingPhase, setViewingPhase] = useState<Phase>(initialMilestone.current_phase);
+    const isPm = profile?.id === pm?.user_id
 
     const currIdx = PHASE_ORDER.indexOf(viewingPhase);
     const actualIdx = PHASE_ORDER.indexOf(milestone.current_phase);
@@ -97,6 +100,7 @@ export default function MilestoneWorkspaceClient({ initialMilestone, profile }: 
                         profile={profile}
                         isHistory={viewingPhase !== milestone.current_phase} 
                         onPhaseUpdate={handlePhaseUpdate} 
+                        isPm={isPm}
                     />
                 )}
                     

@@ -2,7 +2,7 @@
 export type AccessLevel = "MEMBER" | "PM" | null
 
 export const ROLE_GROUPS = {
-    Development: [
+    "Development": [
         "Full Stack Dev",
         "Back End Dev",
         "Front End Dev",
@@ -18,6 +18,10 @@ export const ROLE_GROUPS = {
         "Game Tester",
         "QA Tester",
     ],
+
+    "Sound": [
+        "Sound Designer"
+    ]
 } as const;
 
 export type Role =

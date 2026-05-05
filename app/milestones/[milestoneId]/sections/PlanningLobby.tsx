@@ -8,9 +8,10 @@ interface PlanningLobbyProps {
     isHistory?: boolean;
     onPhaseUpdate: (phase: Phase) => void
     profile: Profile | null;
+    isPm: boolean;
 }
 
-export default function PlanningLobby({milestone, isHistory, onPhaseUpdate, profile}: PlanningLobbyProps) {
+export default function PlanningLobby({milestone, isHistory, onPhaseUpdate, profile, isPm}: PlanningLobbyProps) {
 
     return (
         <div className="max-w-4xl mx-auto grid gap-6">
@@ -47,7 +48,7 @@ export default function PlanningLobby({milestone, isHistory, onPhaseUpdate, prof
 
                 <div className="p-6">
                     {/* Action */}
-                    {!isHistory && (
+                    {!isHistory && isPm && (
                         <div className="flex justify-between items-center pt-6 border-t border-gray-100">
                             <button 
                                 onClick={() => onPhaseUpdate("DEVELOPMENT")}

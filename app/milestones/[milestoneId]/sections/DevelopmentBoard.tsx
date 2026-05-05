@@ -2,7 +2,7 @@
 
 import DevCardModal from "@/components/DevCardModal";
 import DifficultyBadge from "@/components/DifficultyBadge";
-import { Phase } from "@/lib/mockData";
+import { Phase } from "@/types/milestone";
 import { CheckCircle2, User, UserPlus } from "lucide-react";
 import { LayoutGroup, motion } from "motion/react";
 import { useState } from "react";
